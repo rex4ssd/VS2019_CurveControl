@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "CurveCtrl.h"
 
 // CVS2019MFCCurveCtrlDlg dialog
 class CVS2019MFCCurveCtrlDlg : public CDialogEx
@@ -20,7 +20,10 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
-
+	CCurveCtrl*		m_pCurveCtrl;
+	int				m_nCurveCount;
+	int				m_iListIndex;
+	CButton			m_StcCurve;
 // Implementation
 protected:
 	HICON m_hIcon;
@@ -30,4 +33,6 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedOk();
 };

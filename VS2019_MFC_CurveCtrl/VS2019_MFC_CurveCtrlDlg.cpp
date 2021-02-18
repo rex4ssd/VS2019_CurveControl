@@ -14,6 +14,35 @@
 
 
 // CVS2019MFCCurveCtrlDlg dialog
+typedef struct {
+	COLORREF crColour;  // color 
+	TCHAR* szName;   // color name
+} ColourTableEntry;
+
+// colors
+static ColourTableEntry g_crColours[] =
+{
+	{ RGB(0xFF, 0x00, 0x00),    _T("RED")              },
+	{ RGB(0x00, 0x93, 0x00),    _T("GREEN")				},
+	{ RGB(0x8B, 0x8B, 0x00),    _T("Dark Yallow")				},
+	{ RGB(0x80, 0x00, 0x80),    _T("Purple")				},
+	{ RGB(0xFF, 0x68, 0x20),    _T("Orange")				},
+	{ RGB(0x00, 0x00, 0x8B),    _T("Dark Blue")				},
+	{ RGB(0x00, 0x40, 0x40),    _T("Olive Green")			},
+	{ RGB(0xA5, 0x2A, 0x00),    _T("Brown")				},
+	{ RGB(0x38, 0x8E, 0x8E),    _T("Cyan")              },
+	{ RGB(0x00, 0xFF, 0x00),    _T("Bright Green")				},
+	{ RGB(0x4B, 0x00, 0x82),    _T("Indigo")				},
+	{ RGB(0xFF, 0xD7, 0x00),    _T("Gold")              },
+	{ RGB(0x40, 0xE0, 0xD0),    _T("Cyan")				},
+	{ RGB(0xD2, 0xB4, 0x8C),    _T("Brown Yellow")              },
+	{ RGB(0x68, 0x83, 0x8B),    _T("Light Blue")				},
+};
+
+
+const int g_nColourCount = sizeof(g_crColours) / sizeof(ColourTableEntry);
+
+#define ID_CURVE_CONTROL   0x9999
 
 
 
@@ -26,11 +55,14 @@ CVS2019MFCCurveCtrlDlg::CVS2019MFCCurveCtrlDlg(CWnd* pParent /*=nullptr*/)
 void CVS2019MFCCurveCtrlDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+
+	DDX_Control(pDX, IDC_STATIC_CURVE, m_StcCurve);
 }
 
 BEGIN_MESSAGE_MAP(CVS2019MFCCurveCtrlDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDOK, &CVS2019MFCCurveCtrlDlg::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 
@@ -46,6 +78,19 @@ BOOL CVS2019MFCCurveCtrlDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+
+	CRect rect;
+	m_StcCurve.GetWindowRect(rect);
+	ScreenToClient(rect);
+
+	if (NULL == m_pCurveCtrl)
+	{
+		m_pCurveCtrl = new CCurveCtrl;
+		m_pCurveCtrl->Create(rect, this, ID_CURVE_CONTROL);
+		m_pCurveCtrl->SetGridLineStyle(PS_DOT);
+		m_pCurveCtrl->SetMargin(CRect(70, 50, 50, 50));
+	}
+
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -86,3 +131,30 @@ HCURSOR CVS2019MFCCurveCtrlDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CVS2019MFCCurveCtrlDlg::OnBnClickedOk()
+{
+	// TODO: Add your control notification handler code here
+	m_nCurveCount++;
+
+	float fX = 100;
+	float fY = 0;
+	CString strTitle;
+	strTitle.Format("TestOneCurve%d", m_nCurveCount);
+	int index = m_pCurveCtrl->AddCurve(strTitle, g_crColours[m_nCurveCount % g_nColourCount].crColour);
+	m_pCurveCtrl->GetCurve(index)->ShowCurve();
+
+	for (float f = 0.0f; f < 6.28f; f += 0.1f)
+	{
+		fX = f;
+		fY = 100.0 * m_nCurveCount * (sin(f));
+		m_pCurveCtrl->AddData(strTitle, (m_nCurveCount)* fX, fY);
+	}
+	fX = 6.28f;
+	fY = 100 * m_nCurveCount * float(sin(6.28));
+	m_pCurveCtrl->AddData(strTitle, (m_nCurveCount)* fX, fY);
+
+	m_pCurveCtrl->Invalidate();
+	//CDialogEx::OnOK();
+}
