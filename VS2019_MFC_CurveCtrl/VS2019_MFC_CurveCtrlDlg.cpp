@@ -63,6 +63,9 @@ BEGIN_MESSAGE_MAP(CVS2019MFCCurveCtrlDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDOK, &CVS2019MFCCurveCtrlDlg::OnBnClickedOk)
+	ON_BN_CLICKED(IDCANCEL, &CVS2019MFCCurveCtrlDlg::OnBnClickedCancel)
+	ON_BN_CLICKED(IDC_BUTTON1, &CVS2019MFCCurveCtrlDlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_BUTTON2, &CVS2019MFCCurveCtrlDlg::OnBnClickedButton2)
 END_MESSAGE_MAP()
 
 
@@ -157,4 +160,44 @@ void CVS2019MFCCurveCtrlDlg::OnBnClickedOk()
 
 	m_pCurveCtrl->Invalidate();
 	//CDialogEx::OnOK();
+}
+
+
+void CVS2019MFCCurveCtrlDlg::OnBnClickedCancel()
+{
+	// TODO: Add your control notification handler code here
+	CDialogEx::OnCancel();
+}
+
+
+void CVS2019MFCCurveCtrlDlg::OnBnClickedButton1()
+{
+	// TODO: Add your control notification handler code here
+	m_nCurveCount = 0;
+	m_pCurveCtrl->RemoveAll();
+	m_pCurveCtrl->Invalidate();
+}
+
+
+
+void CVS2019MFCCurveCtrlDlg::OnBnClickedButton2()
+{
+	// TODO: Add your control notification handler code here
+	m_nCurveCount = 0;
+	if ( m_pCurveCtrl) {
+		delete m_pCurveCtrl;
+		m_pCurveCtrl = NULL;
+
+		CRect rect;
+		m_StcCurve.GetWindowRect(rect);
+		ScreenToClient(rect);
+		if (NULL == m_pCurveCtrl)
+		{
+			m_pCurveCtrl = new CCurveCtrl;
+			m_pCurveCtrl->Create(rect, this, ID_CURVE_CONTROL);
+			m_pCurveCtrl->SetGridLineStyle(PS_DOT);
+			m_pCurveCtrl->SetMargin(CRect(70, 50, 50, 50));
+		}
+	}
+
 }
